@@ -6,7 +6,8 @@ const redis = require("../config/redis")
 exports.getAccessToken = async (ctx,next) => {
   let cache = await redis.get('access_token').then(function (result) {
      return result
-  }) 
+  })
+  logger.info(`access_token缓存数据\n${cache}`)
   if(cache) {
     ctx.state.accesstoken = cache
     // 直接执行获取票据接口

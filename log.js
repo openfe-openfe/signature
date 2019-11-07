@@ -5,12 +5,14 @@ log4js.configure({
  appenders: {
   access: {
    type: 'dateFile',
-   pattern: '-yyyy-MM-dd.log', //生成文件的规则
+   alwaysIncludePattern: true,
+   pattern: ".yyyy-MM-dd", //生成文件的规则
    filename: path.join('test/logs/', 'access.log') //生成文件名
   },
   application: {
    type: 'dateFile',
-   pattern: '-yyyy-MM-dd.log',
+   pattern: ".yyyy-MM-dd",
+   alwaysIncludePattern: true,
    filename: path.join('test/logs/', 'application.log')
   },
   out: {
