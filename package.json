@@ -1,0 +1,24 @@
+{
+  "name": "",
+  "version": "",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "ioredis": "^4.14.1",
+    "koa": "^2.8.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-log4": "^2.3.2",
+    "koa-router": "^7.4.0",
+    "koa2-cors": "^2.0.6",
+    "mongoose": "^5.7.1",
+    "node-cache": "^5.0.1",
+    "node-fetch": "^2.6.0",
+    "redis": "^2.8.0",
+    "sha1": "^1.1.1",
+    "zookeeper": "^4.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  }
+}
