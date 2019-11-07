@@ -14,16 +14,18 @@ exports.getAccessToken = async (ctx,next) => {
     await next()
   }else {
     // 缓存过期才会重新获取token
-    console.log('过期了')
+    logger.info(`缓存过期`)
     let data = await fetch('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx392eafbf2ac8672d&secret=505c74753d40a4195f6a9e873bd0cf38')
       .then(res => res.json())
       .then(json => {
+        logger.info(`调用微信接口返回access_token接口\n${json}`)
         return json
     })
     if(data.access_token) {
       let token = data.access_token
       ctx.state.accesstoken = token
       redis.set('access_token', token)
+      logger.info(`新access_token\n${token}`)
       // 执行下一个中间件
       await next()
     }else {
@@ -54,12 +56,14 @@ exports.getTicket = async (ctx,next) => {
     json.noncestr = noncestr
     json.timestamp = timestamp
     json.signature = signature
+    logger.info(`从缓存中返回的签名\n${JSON.stringify(json)}`)
     ctx.body = json
   }else{
      // 获取上一个中间件存储的accessToken,并换取ticket票据
     let data = await fetch(`https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${ctx.state.accesstoken}&type=jsapi`)
     .then(res => res.json())
     .then(res => {
+      logger.info(`调用微信接口返回jsapi_ticket接口\n${res}`)
       if(res.errcode === 0) {
         // 继续存储ticket
         redis.set('jsapi_ticket', res.ticket)
@@ -80,6 +84,7 @@ exports.getTicket = async (ctx,next) => {
       }
     }
     });
+    logger.info(`首次或者缓存失效\n${JSON.stringify(data)}`)
     ctx.body = data
   }
 }
