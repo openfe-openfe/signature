@@ -41,7 +41,7 @@ exports.getTicket = async (ctx,next) => {
   // console.log('进入下一个中间件了')
   let noncestr = 'Wm3WZYTPz0wzccnW'
   let timestamp = new Date().getTime()
-  let url = 'http://www.openfe.cn/test/index.html'
+  let url = 'https://www.openfe.cn/test/index.html'
   // 获取存储的票据ticket
   let cache = await redis.get('jsapi_ticket').then(function (result) {
     return result
