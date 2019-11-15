@@ -18,13 +18,13 @@ exports.getAccessToken = async (ctx,next) => {
     let data = await fetch('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx392eafbf2ac8672d&secret=505c74753d40a4195f6a9e873bd0cf38')
       .then(res => res.json())
       .then(json => {
-        logger.info(`调用微信接口返回access_token接口\n${json}`)
+        logger.info(`调用微信接口返回access_token接口\n${JSON.stringify(json)}`)
         return json
     })
     if(data.access_token) {
       let token = data.access_token
       ctx.state.accesstoken = token
-      redis.set('access_token', token)
+      redis.set('access_token', token, 'EX', 7200)
       logger.info(`新access_token\n${token}`)
       // 执行下一个中间件
       await next()
@@ -63,10 +63,10 @@ exports.getTicket = async (ctx,next) => {
     let data = await fetch(`https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${ctx.state.accesstoken}&type=jsapi`)
     .then(res => res.json())
     .then(res => {
-      logger.info(`调用微信接口返回jsapi_ticket接口\n${res}`)
+      logger.info(`调用微信接口返回jsapi_ticket接口\n${JSON.stringify(res)}`)
       if(res.errcode === 0) {
         // 继续存储ticket
-        redis.set('jsapi_ticket', res.ticket)
+        redis.set('jsapi_ticket', res.ticket, 'EX', 7200)
         let jsapi_ticket = res.ticket
         let signature = sha1(`jsapi_ticket=${jsapi_ticket}&noncestr=${noncestr}&timestamp=${timestamp}&url=${url}`)
         let json = {
@@ -84,7 +84,7 @@ exports.getTicket = async (ctx,next) => {
       }
     }
     });
-    logger.info(`首次或者缓存失效\n${JSON.stringify(data)}`)
+    logger.info(`最终返回的数据\n${JSON.stringify(data)}`)
     ctx.body = data
   }
 }
