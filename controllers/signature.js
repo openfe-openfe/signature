@@ -67,6 +67,7 @@ exports.getTicket = async (ctx,next) => {
       if(res.errcode === 0) {
         // 继续存储ticket
         redis.set('jsapi_ticket', res.ticket, 'EX', 7200)
+        logger.info(`设置jsapi_ticket缓存成功\n${res.ticket}`)
         let jsapi_ticket = res.ticket
         let signature = sha1(`jsapi_ticket=${jsapi_ticket}&noncestr=${noncestr}&timestamp=${timestamp}&url=${url}`)
         let json = {
